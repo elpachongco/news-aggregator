@@ -1,0 +1,7 @@
+https://www.reddit.com/.rss
+https://www.reddit.com/new/.rss
+https://www.reddit.com/r/CryptoCurrency/new/.rss
+
+
+
+
