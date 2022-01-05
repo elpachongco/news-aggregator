@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-// Notifier continually scans the given channel, and notifies when new updates
-// are found. 
+// Notifier continuously scans the given channel, and notifies when updates are
+// found.
 func Notifier(c <-chan string, f func(string, ...interface{}) (int, error)) {
 	for {
 		if len(c) > 0 {
@@ -56,12 +56,26 @@ func HandleErr(err error) {
 }
 
 // Compare compares the states of prev & new Feeds and returns a slice of
-// gofeed.Item. Assumes the feed is in descending chronological order (Earliest
-// post at index 0).
-func Compare(prev, new []gofeed.Feed) []gofeed.Item {
+// gofeed.Item.
+func Compare(prev, new gofeed.Feed) []gofeed.Item {
 
-	for k, v := range prev.Items {
-	
+	// [5, 4, 3, 2, 1]
+	// [7, 6, 5, 4, 3]
+	var newItems []gofeed.Item
+	for i := len(new.Items); i >= 0; i-- {
+		var temp []gofeed.Item
+		for j := len(prev.Items); j >= 0; j-- {
+			if new.Items[i] != prev.Items[j] {
+				
+			}
+		}
 	}
+	return newItems
+}
 
+// SendNotifs loops through n and sends titles to c.
+func SendNotifs(n []gofeed.Item, c chan<- string) {
+	for _, v := range n {
+		c <- v.Title
+	}
 }

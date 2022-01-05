@@ -7,18 +7,13 @@ import (
 )
 
 const (
-	scanInterval   = time.Millisecond * 1000
-	notifBuffSize  = 20
+	// Time to wait before re-scanning feeds.
+	scanInterval = time.Millisecond * 1000
+	// Path where the sources file is found.
 	sourceListPath = "sources.txt"
+	// Buffer size for new notifications.
+	notifierBufferSize = 20
 )
-
-type Post struct {
-	Title   string
-	Content string
-}
-
-// A feed is comprised of posts assumed to be in chronological order.
-type Feed []Post
 
 func main() {
 	var sources []string
@@ -28,22 +23,19 @@ func main() {
 	feeds := make([]gofeed.Feed, len(sources))
 	prevFeeds := make([]gofeed.Feed, len(sources))
 
-	newPosts := make(chan string, notifBuffSize)
-	go Notifier(newPosts, fmt.Printf)
+	notifBuffer := make(chan string, notifierBufferSize)
+	go Notifier(notifBuffer, fmt.Printf)
 
 	for {
 		for k, url := range sources {
 			feeds[k] = GetFeed(url)
-			newPostKey := Compare(prevFeeds[k], feeds[k])
+			newPosts := Compare(prevFeeds[k], feeds[k])
 
-			if newPostKey > 0 && k != 0 {
-				for _, v := range feeds {
-					newPosts <- v.Title
-				}
+			if k > 0 {
+				go SendNotifs(newPosts, notifBuffer)
 			}
 		}
 		prevFeeds = feeds
 		time.Sleep(scanInterval)
 	}
 }
-
