@@ -12,7 +12,7 @@ const (
 	// Path where the sources file is found.
 	sourceListPath = "sources.txt"
 	// Buffer size for new notifications.
-	notifierBufferSize = 20
+	notifierBufferSize = 100
 )
 
 func main() {
@@ -27,13 +27,11 @@ func main() {
 	go Notifier(notifBuffer, fmt.Printf)
 
 	for {
-		for k, url := range sources {
-			feeds[k] = GetFeed(url)
-			newPosts := Compare(prevFeeds[k], feeds[k])
+		for feedIndex, url := range sources {
+			feeds[feedIndex] = GetFeed(url)
+			newPosts := Compare(prevFeeds[feedIndex], feeds[feedIndex])
 
-			if k > 0 {
-				go SendNotifs(newPosts, notifBuffer)
-			}
+			go SendNotifs(newPosts, notifBuffer)
 		}
 		prevFeeds = feeds
 		time.Sleep(scanInterval)

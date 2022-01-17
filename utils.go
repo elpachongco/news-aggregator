@@ -2,9 +2,10 @@ package main
 
 import (
 	"bufio"
-	"github.com/mmcdole/gofeed"
 	"log"
 	"os"
+
+	"github.com/mmcdole/gofeed"
 )
 
 // Notifier continuously scans the given channel, and notifies when updates are
@@ -13,19 +14,18 @@ func Notifier(c <-chan string, f func(string, ...interface{}) (int, error)) {
 	for {
 		if len(c) > 0 {
 			x := <-c
-			f(x)
+			f(x + "\n")
 		}
 	}
 }
 
-// GetFeed returns a feed from a given rss url. 
+// GetFeed returns a feed from a given rss url.
 func GetFeed(url string) gofeed.Feed {
 
 	fp := gofeed.NewParser()
 	feed, err := fp.ParseURL(url)
-	HandleErr(err)
+	HandleErr(err, url)
 	return *feed
-
 
 }
 
@@ -41,7 +41,7 @@ func GetSources(path string) ([]string, error) {
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		t := scanner.Text()
-		if t == "" {
+		if t == "" || t[0] == '#' {
 			continue
 		}
 		sources = append(sources, t)
@@ -49,24 +49,28 @@ func GetSources(path string) ([]string, error) {
 	return sources, nil
 }
 
-func HandleErr(err error) {
+func HandleErr(err error, s ...interface{}) {
 	if err != nil {
+		for _, v := range s {
+			log.Println(v)
+		}
 		log.Fatal(err)
 	}
 }
 
 // Compare compares the states of prev & new Feeds and returns a slice of
-// gofeed.Item.
+// gofeed.Item that is comprised of new items not found in prev.
 func Compare(prev, new gofeed.Feed) []gofeed.Item {
-
-	// [5, 4, 3, 2, 1]
-	// [7, 6, 5, 4, 3]
 	var newItems []gofeed.Item
-	for i := len(new.Items); i >= 0; i-- {
-		var temp []gofeed.Item
-		for j := len(prev.Items); j >= 0; j-- {
-			if new.Items[i] != prev.Items[j] {
-				
+	for _, newVal := range new.Items {
+		maxTries := len(prev.Items) - 1 
+		for tries, prevVal := range prev.Items {
+			if tries >= maxTries {
+				newItems = append(newItems, *newVal)
+			}
+			if newVal.Content == prevVal.Content &&
+				newVal.Updated == prevVal.Updated {
+				break
 			}
 		}
 	}
@@ -76,6 +80,12 @@ func Compare(prev, new gofeed.Feed) []gofeed.Item {
 // SendNotifs loops through n and sends titles to c.
 func SendNotifs(n []gofeed.Item, c chan<- string) {
 	for _, v := range n {
-		c <- v.Title
+		c <- FormatItem(v)
 	}
+}
+
+// FormatItem contains the final formatting of the output notifications
+func FormatItem(i gofeed.Item) string {
+	publishTime := i.PublishedParsed.String()
+	return  publishTime + "\n" + i.Title + "\n" + i.Link + "\n"
 }

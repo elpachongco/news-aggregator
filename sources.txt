@@ -1,7 +1,11 @@
-https://www.reddit.com/.rss
-https://www.reddit.com/new/.rss
+# Lines beginning with # are comments - they are ignored by the program.
+
+
 https://www.reddit.com/r/CryptoCurrency/new/.rss
-
-
-
-
+https://news.yahoo.com/rss/
+http://rss.cnn.com/rss/cnn_topstories.rss
+https://www.theguardian.com/world/rss
+https://dailyhodl.com/feed/
+https://bitcoinmagazine.com/.rss/full/
+https://coingape.com/feed/
+https://news.ycombinator.com/rss
