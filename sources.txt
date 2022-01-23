@@ -3,9 +3,10 @@
 
 https://www.reddit.com/r/CryptoCurrency/new/.rss
 https://news.yahoo.com/rss/
-http://rss.cnn.com/rss/cnn_topstories.rss
 https://www.theguardian.com/world/rss
 https://dailyhodl.com/feed/
 https://bitcoinmagazine.com/.rss/full/
 https://coingape.com/feed/
 https://news.ycombinator.com/rss
+https://reddit.com/r/memes/new/.rss
+https://reddit.com/r/CryptoCurrency/comments/safw69/daily_discussion_january_23_2022_gmt0/.rss

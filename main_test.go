@@ -2,109 +2,45 @@ package main
 
 import (
 	// "fmt"
-	"log"
+	"fmt"
+	// "log"
 	"testing"
 
 	"github.com/mmcdole/gofeed"
 )
 
-const (
-	rssHeadTemplate = `
-<?xml version="1.0" encoding="windows-1252"?>
-<rss version="2.0">
-  <channel>
-    <title>FeedForAll Sample Feed</title>
-    <description>RSS is a fascinating technology. The uses for RSS are expanding daily. Take a closer look at how various industries are using the benefits of RSS in their businesses.</description>
-    <link>http://www.feedforall.com/industry-solutions.htm</link>
-    <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
-    <copyright>Copyright 2004 NotePage, Inc.</copyright>
-    <docs>http://blogs.law.harvard.edu/tech/rss</docs>
-    <language>en-us</language>
-    <lastBuildDate>Tue, 19 Oct 2004 13:39:14 -0400</lastBuildDate>
-    <managingEditor>marketing@feedforall.com</managingEditor>
-    <pubDate>Tue, 19 Oct 2004 13:38:55 -0400</pubDate>
-    <webMaster>webmaster@feedforall.com</webMaster>
-    <generator>FeedForAll Beta1 (0.0.1.8)</generator>
-    <image>
-      <url>http://www.feedforall.com/ffalogo48x48.gif</url>
-      <title>FeedForAll Sample Feed</title>
-      <link>http://www.feedforall.com/industry-solutions.htm</link>
-		<description>FeedForAll Sample Feed</description>
-		<width>48</width>
-      <height>48</height>
-    </image>
-`
-
-	rssTailTemplate = `
-</channel>
-</rss>
-`
-)
-
-// func TestGetFeed(t *testing.T) {
-// 	var x gofeed.Feed
-// 	x = GetFeed("https://hnrss.org/newcomments")
-// 	log.Println(x)
-// }
-
-// func TestGetSources(t *testing.T) {
-
-// 	x, err := GetSources("sources.txt")
-// 	if err != nil {
-// 		t.Fatal(err)
-// 	}
-// 	log.Println(x)
-// }
-
 func TestCompare(t *testing.T) {
+	// Make two feeds of same length with different but overlapping items.
+	// prev := [5, 4, 3, 2, 1, 0]
+	// new := [8, 7, 6, 5, 4, 3]
+	// Compare(prev, new) == [8, 7, 6]
+	t.Run("Basic Comparison", func(t *testing.T) {
+		maxNum := 8
+		sliceLen := 6
+		items := []*gofeed.Item{}
 
-	previous := `
-    <item>
-      <title>Test Item 2</title>
-	  <description>
-		Test Item 2 Description
-	  </description>
-      <link>http://www.feedforall.com/law-enforcement.htm</link>
-      <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
-      <comments>http://www.feedforall.com/forum</comments>
-      <pubDate>Tue, 20 Oct 2004 11:08:56 -0400</pubDate>
-    </item>
-    <item>
-      <title>Test Item 1</title>
-	  <description>
-		Test Item 1 Description
-	  </description>
-      <link>http://www.feedforall.com/law-enforcement.htm</link>
-      <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
-      <comments>http://www.feedforall.com/forum</comments>
-      <pubDate>Tue, 19 Oct 2004 11:08:56 -0400</pubDate>
-    </item>
-`
-	current := `
-    <item>
-      <title>Test Item 3</title>
-	  <description>
-		Test Item 3 Description
-	  </description>
-      <link>http://www.feedforall.com/law-enforcement.htm</link>
-      <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
-      <comments>http://www.feedforall.com/forum</comments>
-      <pubDate>Tue, 21 Oct 2004 11:08:56 -0400</pubDate>
-    </item>
-    <item>
-      <title>Test Item 2</title>
-	  <description>
-		Test Item 2 Description
-	  </description>
-      <link>http://www.feedforall.com/law-enforcement.htm</link>
-      <category domain="www.dmoz.com">Computers/Software/Internet/Site Management/Content Management</category>
-      <comments>http://www.feedforall.com/forum</comments>
-     <pubDate>Tue, 20 Oct 2004 11:08:56 -0400</pubDate>
-    </item>
-`
-	pf, _ := gofeed.NewParser().ParseString(rssHeadTemplate + previous + rssTailTemplate)
-	nf, _ := gofeed.NewParser().ParseString(rssHeadTemplate + current + rssTailTemplate)
+		for k := maxNum; k >= 0; k-- {
+			var item gofeed.Item
+			item.Title = fmt.Sprintf("Test Item #%d", k)
+			item.Content = fmt.Sprintf("Test Item content #%d", k)
+			items = append(items, &item)
+		}
 
-	a := Compare(*pf, *nf)
-	log.Println(a)
+		var prevFeed gofeed.Feed
+		prevFeed.Title = "Prev Feed"
+
+		var newFeed gofeed.Feed
+		newFeed.Title = "New Feed"
+
+		// slice `items` now contains the values:
+		// [8,7,6,5,4,3,2,1,0]
+		
+		prevFeed.Items = items[maxNum-sliceLen+1:] // Should be [5,4,3,2,1,0]
+		newFeed.Items = items[0:sliceLen] // Should be [8,7,6,5,4,3]
+
+		a := Compare(prevFeed, newFeed) // == [8,7,6] ?
+		for _, v := range a {
+			fmt.Println("Found new:", v.Title)
+		}
+	})
 }
