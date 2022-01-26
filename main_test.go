@@ -35,12 +35,18 @@ func TestCompare(t *testing.T) {
 		// slice `items` now contains the values:
 		// [8,7,6,5,4,3,2,1,0]
 		
-		prevFeed.Items = items[maxNum-sliceLen+1:] // Should be [5,4,3,2,1,0]
-		newFeed.Items = items[0:sliceLen] // Should be [8,7,6,5,4,3]
+		prevFeed.Items = items[maxNum-sliceLen+1:] // == [5,4,3,2,1,0]
+		newFeed.Items = items[0:sliceLen] // == [8,7,6,5,4,3]
 
-		a := Compare(prevFeed, newFeed) // == [8,7,6] ?
-		for _, v := range a {
-			fmt.Println("Found new:", v.Title)
+		want := items[0: maxNum-sliceLen+1]
+		a := Compare(prevFeed, newFeed) // == [8,7,6]
+		for k, v := range a {
+			if v.Title != want[k].Title {
+				t.Errorf("Basic comparison test fail")
+			}
 		}
+
+
+
 	})
 }

@@ -111,7 +111,7 @@ func GetNew(feed gofeed.Feed, t time.Duration) []gofeed.Item {
 func FormatItem(i gofeed.Item) string {
 	publishTime := i.PublishedParsed.Local().String()
 	content := i.Content
-	maxContentSize := 100
+	maxContentSize := 150
 	if len(i.Content) > maxContentSize {
 		content = i.Content[:maxContentSize]
 	}
