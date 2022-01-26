@@ -44,14 +44,15 @@ func TestCompare(t *testing.T) {
 			got := Compare(prevFeed, newFeed)
 			for k, v := range got {
 				if v.Title != want[k].Title {
-					t.Errorf("Compare basic test fail")
+					t.Errorf("Compare basic test fail, Want %s, got %s",
+					want[k].Title, v.Title)
 				}
 			}
 		})
 
 	// Tests whether Compare will work properly when newFeed contains items
 	// that are new (not present in prevFeed).
-	t.Run("Compare 2 feeds of same length with no common items",
+	t.Run("Compare 2 feeds of same length with no common items.",
 		func(t *testing.T) {
 			prevFeed.Items = items[9:17]
 			newFeed.Items = items[0:8]
@@ -67,11 +68,19 @@ func TestCompare(t *testing.T) {
 			}
 	})
 
-	t.Run("",
+	t.Run("Compare feeds where no new items are present.",
 		func(t *testing.T) {
-			
-		})
+			prevFeed.Items = items[0:8]
+			newFeed.Items = items[0:8]
+			a := Compare(prevFeed, newFeed)
+			got := len(a)
+			want := 0
+			if got != want {
+				t.Errorf("Error Compare() 2 feeds where no new item is present."+
+					"Want %d, Got %d", want, got)
+			}
 
+		})
 }
 
 /* TODO
