@@ -5,17 +5,29 @@ notification.
 
 ## Usage
 
-Make sure golang is installed.
+Make sure golang is installed and present on PATH environment variable.
 
 In the terminal:
-$ cd $HOME
-$ git clone https://github.com/elpachongco/news-aggregator
-$ cd news-aggregator
+
+	``` 
+	$ cd $HOME
+	$ git clone https://github.com/elpachongco/news-aggregator
+	$ cd news-aggregator
+	```
 
 Then add a new file, named `sources.txt`. Put all rss feed urls to be scanned in the file.
 
-To run the program, in the same directory, run
-$ go run .
+Example:
+
+	```
+	$ echo "https://reddit.com/r/memes/new/.rss" > sources.txt
+	```
+
+In the same directory, run the program with:
+
+	```
+	$ go run .
+	```
 
 ## Architecture
 
