@@ -18,3 +18,7 @@ To run the program, in the same directory, run
 $ go run .
 
 ## Architecture
+
+## TODO
+
+- Add content parser for html
