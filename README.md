@@ -21,4 +21,6 @@ $ go run .
 
 ## TODO
 
-- Add content parser for html
+- Add content parser for html.
+- Make program accept command line arguments.
+- Add more tests.
