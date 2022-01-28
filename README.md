@@ -5,7 +5,8 @@ notification.
 
 ## Usage
 
-Make sure golang is installed and present on PATH environment variable.
+Make sure Go is installed and present on PATH environment variable.
+[Go Installation instruction](https://go.dev/doc/install)
 
 In the terminal:
 
