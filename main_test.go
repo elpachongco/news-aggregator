@@ -83,6 +83,11 @@ func TestCompare(t *testing.T) {
 		})
 }
 
+func TestGetText(t *testing.T) {
+	a := `<p> Test 
+	</p>`
+	fmt.Println(GetText(a))
+}
 /* TODO
 
  */

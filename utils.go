@@ -5,8 +5,11 @@ package main
 import (
 	"bufio"
 	"log"
+	"strings"
+
 	// "fmt"
 	"os"
+	"regexp"
 	"time"
 
 	"github.com/mmcdole/gofeed"
@@ -110,10 +113,28 @@ func GetNew(feed gofeed.Feed, t time.Duration) []gofeed.Item {
 // FormatItem contains the final formatting of the output notifications
 func FormatItem(i gofeed.Item) string {
 	publishTime := i.PublishedParsed.Local().String()
-	content := i.Content
+	content := GetText(i.Content)
 	maxContentSize := 150
-	if len(i.Content) > maxContentSize {
+	if len(content) > maxContentSize {
 		content = i.Content[:maxContentSize]
 	}
 	return publishTime + "\n" + i.Title + "\n" + content + "\n" + i.Link + "\n\n"
+}
+
+// GetText takes the content of a gofeed.Item and returns the text content
+// without the html tags.
+func GetText(s string) string {
+	openTagRe := regexp.MustCompile(`<p>`)
+	closeTagRe := regexp.MustCompile(`</p>`)
+	openTags := openTagRe.FindAllStringIndex(s, -1)
+	closeTags := closeTagRe.FindAllStringIndex(s, -1)
+	
+	txts := []string{}
+	for k := range openTags {
+		start := openTags[k][1]
+		end := closeTags[k][0]
+		txt := s[start:end]
+		txts = append(txts, txt)
+	}
+	return strings.Join(txts, " ")
 }
